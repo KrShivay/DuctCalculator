@@ -1,0 +1,65 @@
+export const AIR_FLOW_MUL = 3;
+export const AC_LOAD_DIV = 400;
+export const SPIRAL_DUCT_MUL = 55;
+export const OVAL_DUCT_MUL = 60;
+export const REACTANGLE_DUCT_MUL = 65;
+export const PREINSULATED_DUCT_MUL = 400;
+export const FABRIC_DUCT_MUL = 40;
+export const SS_RECTANGULAR_DUCT_MUL = 400;
+
+export const SPIRAL_PARAMS = {
+  RAW_MATERIAL_COST: 649038,
+  INSULATION_COST: 218625,
+  ADP_COST: 143250,
+  LPS_COST: 196292,
+};
+export const OVAL_PARAMS = {
+  RAW_MATERIAL_COST: 944055,
+  INSULATION_COST: 238500,
+  ADP_COST: 144000,
+  LPS_COST: 214136,
+};
+export const RECTANGULAR_PARAMS = {
+  RAW_MATERIAL_COST: 568181,
+  INSULATION_COST: 258375,
+  ADP_COST: 122250,
+  LPS_COST: 231981,
+};
+export const PREINSULATED_PARAMS = {
+  RAW_MATERIAL_COST: 432900,
+  INSULATION_COST: 0,
+  ADP_COST: 122250,
+  LPS_COST: 107250,
+};
+export const FABRIC_PARAMS = {
+  RAW_MATERIAL_COST: 750000,
+  INSULATION_COST: 0,
+  ADP_COST: 0,
+  LPS_COST: 90000,
+};
+export const SSDUCTING_PARAMS = {
+  RAW_MATERIAL_COST: 3409088,
+  INSULATION_COST: 258375,
+  ADP_COST: 244500,
+  LPS_COST: 221621,
+};
+
+export const DEFAULT_PARAMS = {
+  RAW_MATERIAL_COST: 0,
+  INSULATION_COST: 0,
+  ADP_COST: 0,
+  LPS_COST: 0,
+};
+
+export const WEIGHT_KG = {
+  Spiral: 1992,
+  Oval: 2173,
+  Rectangle: 2354,
+  Preinsulated: 488,
+  Fabric: 235,
+  'SS Rectangle': 2476,
+};
+
+export const SQM_DIV = 10.76;
+
+export const UNIT_ARR = ['SQ.FT', 'SQ.M'];
