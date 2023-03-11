@@ -1,7 +1,15 @@
 import React from 'react';
-import {Linking, ScrollView, StyleSheet, View} from 'react-native';
+import {
+  Linking,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {Button, Card, Text} from 'react-native-paper';
-import {colorBlack} from '../../styles/constants';
+import {colorBlack, firstColor} from '../../styles/constants';
+import MainStyles from '../../styles/mainStyles';
 import SpaceStyles from '../../styles/spaceStyles';
 import TextStyles from '../../styles/textStyles';
 
@@ -16,10 +24,11 @@ const btnArr = [
 
 const TabButton = ({sizerData}: {sizerData: any}) => {
   const handleFabricDetailsOpen = () => {
+    const android_url =
+      'https://play.google.com/store/apps/details?id=com.prihoda.calculator';
+    const ios_url = 'https://apps.apple.com/in/app/prihoda/id1148389151';
     try {
-      Linking.openURL(
-        'https://play.google.com/store/apps/details?id=com.prihoda.calculator',
-      );
+      Linking.openURL(Platform.OS === 'ios' ? ios_url : android_url);
     } catch (e) {
       console.log(e);
     }
@@ -55,14 +64,21 @@ const TabButton = ({sizerData}: {sizerData: any}) => {
                 </React.Fragment>
               ))}
             {label === 'Fabric' ? (
-              <Button
-                textColor="#3498db"
-                mode="outlined"
-                compact
-                style={{marginVertical: 4}}
-                onPress={handleFabricDetailsOpen}>
-                Click here for Fabric Details
-              </Button>
+              <TouchableOpacity
+                style={styles.touchableStyle}
+                onPress={() => handleFabricDetailsOpen()}>
+                <Text
+                  style={[
+                    MainStyles.justifyCenter,
+                    {
+                      color: firstColor,
+                      borderBottomWidth: 1,
+                      borderBottomColor: firstColor,
+                    },
+                  ]}>
+                  Click here for Fabric Details
+                </Text>
+              </TouchableOpacity>
             ) : null}
           </View>
         </React.Fragment>
@@ -74,7 +90,9 @@ const TabButton = ({sizerData}: {sizerData: any}) => {
 export default function GiDuctResult({sizerData}: {sizerData: any}) {
   return (
     <Card.Content>
-      <Text style={[SpaceStyles.p2, {color: colorBlack}]} variant="titleMedium">
+      <Text
+        style={[SpaceStyles.p2, TextStyles.colorMedium]}
+        variant="titleMedium">
         Duct Costing
       </Text>
       <View style={SpaceStyles.my1}>
@@ -104,4 +122,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderBottomWidth: 1,
   },
+  touchableStyle: {
+    marginVertical: 4,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingTop: 5,
+  },
 });
+
+// <Button
+//   textColor="#3498db"
+//   mode="outlined"
+//   compact
+//   style={{marginVertical: 4}}
+//   onPress={handleFabricDetailsOpen}>
+//   Click here for Fabric Details
+// </Button>;

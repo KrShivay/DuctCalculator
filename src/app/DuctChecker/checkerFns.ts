@@ -76,7 +76,7 @@ export function fricationMethodCalculation(
       velocityCircular: (VelocityCircle * 196.85).toFixed(2),
       velocityRectangular: (VelocityRectangle * 196.85).toFixed(2),
       mmHeight: (DuctHeight * 25.4).toFixed(2),
-      mmWidth: (DuctHeight * 2 * 25.4).toFixed(2),
+      mmWidth: (DuctHeight * 2 * 39.3701 * 25.4).toFixed(2),
     };
   }
 }
@@ -109,7 +109,7 @@ export function velocityMethodCalculation(
         frictionCircular: FrictionCircle.toFixed(2),
         frictionRectangular: FrictionRectangle.toFixed(2),
         mmHeight: (DuctHeight * 1000).toFixed(2),
-        mmWidth: (DuctHeight * 2 * 1000).toFixed(2),
+        mmWidth: (DuctWidth * 1000).toFixed(2),
       };
     } catch (e) {
       console.log(e);
@@ -122,7 +122,7 @@ export function velocityMethodCalculation(
         frictionCircular: (FrictionCircle * 0.12).toFixed(2),
         frictionRectangular: (FrictionRectangle * 0.12).toFixed(2),
         mmHeight: (DuctHeight * 25.4).toFixed(2),
-        mmWidth: (DuctHeight * 2 * 25.4).toFixed(2),
+        mmWidth: (DuctWidth * 39.3701 * 25.4).toFixed(2),
       };
     } catch (e) {
       console.log('e', e);

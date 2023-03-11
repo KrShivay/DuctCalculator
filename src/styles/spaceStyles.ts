@@ -130,6 +130,9 @@ const SpaceStyles = StyleSheet.create({
   mb2: {
     marginTop: 5,
   },
+  mt3: {
+    marginTop: 8,
+  },
 });
 
 export default SpaceStyles;

@@ -56,6 +56,7 @@ const Dashbaord = () => {
       renderScene={renderScene}
       activeColor={firstColor}
       inactiveColor={secondColor}
+      barStyle={{backgroundColor: '#f7f7f7'}}
     />
   );
 };

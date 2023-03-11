@@ -111,6 +111,8 @@ export function getGiSubCosting(
     LPS_COST: number;
   },
   floorArea: number,
+  airFlow: number,
+  ductQnty: number,
 ) {
   // const totalCost =
   //   obj.RAW_MATERIAL_COST * floorArea ??
@@ -120,9 +122,9 @@ export function getGiSubCosting(
   //   0;
   // 'Total Cost': inrFormatter.format(totalCost),
   return {
-    'INR/SQ.FT': inrFormatter.format(obj.RAW_MATERIAL_COST * floorArea ?? 0),
-    'Weight(kg)': inrFormatter.format(obj.INSULATION_COST * floorArea ?? 0),
-    'INR/cmf': inrFormatter.format(obj.ADP_COST * floorArea ?? 0),
+    'INR/SQ.FT': inrFormatter.format(obj.RAW_MATERIAL_COST * ductQnty ?? 0),
+    'Weight(kg)': inrFormatter.format(obj.INSULATION_COST * ductQnty ?? 0),
+    'INR/cmf': inrFormatter.format(obj.ADP_COST * airFlow ?? 0),
     'INR/SQ.FT floor area': inrFormatter.format(obj.LPS_COST * floorArea ?? 0),
     'Storage Area': '',
     'Ease of Installation': '',
@@ -131,14 +133,44 @@ export function getGiSubCosting(
   };
 }
 
-export function getGiConsting(floorArea: number): any {
+export function getGiConsting(
+  floorArea: number,
+  airFlow: any,
+  ductQnty: any,
+): any {
+  console.log('<<<<>>>>>>>>', {ductQnty});
   return {
-    Rectangle: getGiSubCosting(RECTANGULAR_PARAMS, floorArea),
-    Oval: getGiSubCosting(OVAL_PARAMS, floorArea),
-    Spiral: getGiSubCosting(SPIRAL_PARAMS, floorArea),
-    Preinsulated: getGiSubCosting(PREINSULATED_PARAMS, floorArea),
-    Fabric: getGiSubCosting(FABRIC_PARAMS, floorArea),
-    'SS Rectangle': getGiSubCosting(SSDUCTING_PARAMS, floorArea),
+    Rectangle: getGiSubCosting(
+      RECTANGULAR_PARAMS,
+      floorArea,
+      airFlow,
+      ductQnty['Rectangle'],
+    ),
+    Oval: getGiSubCosting(OVAL_PARAMS, floorArea, airFlow, ductQnty['Oval']),
+    Spiral: getGiSubCosting(
+      SPIRAL_PARAMS,
+      floorArea,
+      airFlow,
+      ductQnty['Spiral'],
+    ),
+    Preinsulated: getGiSubCosting(
+      PREINSULATED_PARAMS,
+      floorArea,
+      airFlow,
+      ductQnty['Preinsulated'],
+    ),
+    Fabric: getGiSubCosting(
+      FABRIC_PARAMS,
+      floorArea,
+      airFlow,
+      ductQnty['Fabric'],
+    ),
+    'SS Rectangle': getGiSubCosting(
+      SSDUCTING_PARAMS,
+      floorArea,
+      airFlow,
+      ductQnty['SS Rectangle'],
+    ),
   };
 }
 
@@ -158,7 +190,7 @@ export function calculateCosting(
       hvacCosting: {
         ductQnty,
       },
-      giCosting: getGiConsting(parseFloat(floorArea)),
+      giCosting: getGiConsting(parseFloat(floorArea), airFlow, ductQnty),
     };
     return data;
   } else {

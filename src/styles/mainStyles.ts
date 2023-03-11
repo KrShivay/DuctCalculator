@@ -50,6 +50,19 @@ const MainStyles = StyleSheet.create({
   halfInput: {
     width: '49%',
   },
+  ratioBox: {
+    borderWidth: 1,
+    borderRadius: 15,
+    paddingVertical: '15%',
+    marginVertical: 5,
+    marginHorizontal: 7,
+  },
+  widthOneThird: {
+    width: '32%',
+  },
+  widthTwoThird: {
+    width: '66%',
+  },
 });
 
 export default MainStyles;

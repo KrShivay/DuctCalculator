@@ -1,12 +1,13 @@
 import {yupResolver} from '@hookform/resolvers/yup';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
-import {StyleSheet, View} from 'react-native';
+import {Alert, StyleSheet, View} from 'react-native';
 import {Button, Text, TextInput} from 'react-native-paper';
 import {StoreJsonData} from '../../asyncStorage';
 import ScreenWrapper from '../../layout/ScreenWrapper';
+import {registerUser} from '../../services';
 import MainStyles from '../../styles/mainStyles';
 import SpaceStyles from '../../styles/spaceStyles';
 import TextStyles from '../../styles/textStyles';
@@ -14,10 +15,31 @@ import {loginValidation} from '../../validations/loginValidation';
 import FormError from '../FormComponents/FormError';
 import TextInputAvoidingView from '../KeyBoardAvoidingView';
 import Loader from '../Loader';
+import RNLocation from 'react-native-location';
 
 export type RootStackParamList = {
   Dashboard: {id: number} | undefined;
 };
+
+RNLocation.configure({
+  distanceFilter: 5.0,
+  desiredAccuracy: {
+    ios: 'best',
+    android: 'balancedPowerAccuracy',
+  },
+  // Android only
+  androidProvider: 'auto',
+  interval: 5000, // Milliseconds
+  fastestInterval: 10000, // Milliseconds
+  maxWaitTime: 5000, // Milliseconds
+  // iOS Only
+  activityType: 'other',
+  allowsBackgroundLocationUpdates: false,
+  headingFilter: 1, // Degrees
+  headingOrientation: 'portrait',
+  pausesLocationUpdatesAutomatically: false,
+  showsBackgroundLocationIndicator: false,
+});
 
 type LoginForm = {
   userName: string;
@@ -30,6 +52,8 @@ export default function Login() {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const [loading, setLoading] = useState(false);
+  const [permission, setPermission] = useState<boolean | undefined>();
+  const [location, setLocation] = useState<any | undefined>();
 
   const {
     control,
@@ -45,13 +69,63 @@ export default function Login() {
   });
 
   const onSubmit = (data: LoginForm) => {
-    setLoading(true);
-    StoreJsonData('userDetails', data);
-    setTimeout(() => {
-      setLoading(false);
-      navigation.navigate('Dashboard');
-    }, 500);
+    if (location) {
+      setLoading(true);
+      StoreJsonData('userDetails', data);
+      console.log(data);
+      registerUser({
+        ...data,
+        email: data.email && data?.email !== '' ? data.email : '_',
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
+      setTimeout(() => {
+        setLoading(false);
+        navigation.navigate('Dashboard');
+      }, 500);
+    } else {
+      Alert.alert(
+        'Error',
+        'Could Not Fetch Location. Please ensure location services are turned on.',
+        [
+          {
+            text: 'Ok',
+            onPress: () => handleLocation(),
+          },
+        ],
+        {
+          cancelable: false,
+        },
+      );
+    }
   };
+
+  const handleLocation = () => {
+    RNLocation.requestPermission({
+      ios: 'whenInUse',
+      android: {
+        detail: 'coarse',
+      },
+    }).then(granted => {
+      if (granted) {
+        setPermission(granted);
+      } else {
+        setPermission(false);
+      }
+    });
+  };
+
+  useEffect(() => {
+    handleLocation();
+  }, []);
+
+  useEffect(() => {
+    if (permission) {
+      RNLocation.getLatestLocation({timeout: 60000}).then(latestLocation => {
+        setLocation(latestLocation);
+      });
+    }
+  }, [permission]);
 
   return (
     <TextInputAvoidingView>
@@ -87,11 +161,12 @@ export default function Login() {
               }}
               render={({field: {onChange, onBlur, value}}) => (
                 <TextInput
+                  dense
+                  mode="outlined"
                   style={styles.inputContainerStyle}
                   label="Username *"
                   placeholder="Enter Username"
                   onBlur={onBlur}
-                  mode="outlined"
                   onChangeText={onChange}
                   value={value}
                 />
@@ -106,10 +181,11 @@ export default function Login() {
               }}
               render={({field: {onChange, onBlur, value}}) => (
                 <TextInput
+                  dense
+                  mode="outlined"
                   style={styles.inputContainerStyle}
                   keyboardType="numeric"
                   label="Mobile No *"
-                  mode="outlined"
                   placeholder="Enter Mobile No"
                   onBlur={onBlur}
                   onChangeText={onChange}
@@ -123,9 +199,10 @@ export default function Login() {
               control={control}
               render={({field: {onChange, onBlur, value}}) => (
                 <TextInput
+                  dense
+                  mode="outlined"
                   style={styles.inputContainerStyle}
                   label="Email"
-                  mode="outlined"
                   placeholder="Enter Email"
                   onBlur={onBlur}
                   onChangeText={onChange}

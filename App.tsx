@@ -1,6 +1,7 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import * as React from 'react';
+import {LogBox} from 'react-native';
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {GetJsonData} from './src/asyncStorage';
@@ -50,6 +51,8 @@ type userDataProp = {
   mobileNo: string;
   userName: string;
 };
+
+LogBox.ignoreAllLogs();
 
 export default function App() {
   const [loading, setLoading] = React.useState<boolean>(true);

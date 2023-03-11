@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
 import {firstColor} from '../../styles/constants';
 
 const {height, width} = Dimensions.get('window');
@@ -9,7 +9,18 @@ export default function LoadingScreen() {
     <View style={[styles.fullContainer]}>
       <View style={[styles.flexColContainer]}>
         <View style={styles.emptyView}>
-          <Text style={styles.heading}>Ductulator</Text>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+            }}>
+            <Image
+              source={require('../../assets/logo.png')}
+              style={{paddingHorizontal: 10}}
+            />
+          </View>
+          <Text style={styles.heading}>Advance Ductulator</Text>
         </View>
       </View>
     </View>

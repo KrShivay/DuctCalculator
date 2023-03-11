@@ -25,6 +25,8 @@ export default function ResultsChecker({
         <View style={MainStyles.flexRow}>
           <View style={[SpaceStyles.m1, MainStyles.halfInput]}>
             <TextInput
+              dense
+              mode="outlined"
               editable={false}
               label="Circular Duct"
               style={SpaceStyles.mrp}
@@ -36,6 +38,8 @@ export default function ResultsChecker({
           </View>
           <View style={[SpaceStyles.m1, MainStyles.halfInput]}>
             <TextInput
+              dense
+              mode="outlined"
               editable={false}
               label="Rectangular Duct"
               style={SpaceStyles.mrp}
@@ -50,6 +54,8 @@ export default function ResultsChecker({
         <View style={MainStyles.flexRow}>
           <View style={[SpaceStyles.m1, MainStyles.halfInput]}>
             <TextInput
+              dense
+              mode="outlined"
               editable={false}
               label="Circular Duct"
               style={SpaceStyles.mrp}
@@ -61,6 +67,8 @@ export default function ResultsChecker({
           </View>
           <View style={[SpaceStyles.m1, MainStyles.halfInput]}>
             <TextInput
+              dense
+              mode="outlined"
               editable={false}
               label="Rectangle Duct"
               style={SpaceStyles.mrp}
@@ -117,6 +125,8 @@ export default function ResultsChecker({
           <View style={SpaceStyles.m1}>
             <TextInput
               editable={false}
+              dense
+              mode="outlined"
               label="Diameter"
               style={SpaceStyles.mrp}
               value={checkerData?.ductDiamaeter?.toString()}
@@ -127,6 +137,8 @@ export default function ResultsChecker({
           </View>
           <View style={SpaceStyles.m1}>
             <TextInput
+              dense
+              mode="outlined"
               editable={false}
               label="Duct Width"
               style={SpaceStyles.mrp}
@@ -138,6 +150,8 @@ export default function ResultsChecker({
           </View>
           <View style={SpaceStyles.m1}>
             <TextInput
+              dense
+              mode="outlined"
               editable={false}
               label="Duct Height"
               style={SpaceStyles.mrp}
@@ -149,36 +163,38 @@ export default function ResultsChecker({
           </View>
         </View>
         <View style={MainStyles.halfInput}>
-          <Text
-            style={[
-              TextStyles.colorMedium,
-              SpaceStyles.py5,
-              SpaceStyles.px1,
-              TextStyles.textCenter,
-            ]}
-            variant="titleSmall">
-            Duct Ratio
-          </Text>
-          <Text
-            style={[
-              TextStyles.colorMedium,
-              SpaceStyles.py2,
-              SpaceStyles.px1,
-              TextStyles.textCenter,
-            ]}
-            variant="titleSmall">
-            1.4 : 1
-          </Text>
-          <Text
-            style={[
-              TextStyles.colorMedium,
-              SpaceStyles.py2,
-              SpaceStyles.px1,
-              TextStyles.textCenter,
-            ]}
-            variant="titleSmall">
-            Height : Width
-          </Text>
+          <View style={MainStyles.ratioBox}>
+            <Text
+              style={[
+                TextStyles.colorMedium,
+                SpaceStyles.py5,
+                SpaceStyles.px1,
+                TextStyles.textCenter,
+              ]}
+              variant="titleSmall">
+              Duct Ratio
+            </Text>
+            <Text
+              style={[
+                TextStyles.colorMedium,
+                SpaceStyles.py2,
+                SpaceStyles.px1,
+                TextStyles.textCenter,
+              ]}
+              variant="titleSmall">
+              {checkerData?.mmHeight / 1000 / checkerData?.ductWidth} : 1
+            </Text>
+            <Text
+              style={[
+                TextStyles.colorMedium,
+                SpaceStyles.py2,
+                SpaceStyles.px1,
+                TextStyles.textCenter,
+              ]}
+              variant="titleSmall">
+              Height : Width
+            </Text>
+          </View>
         </View>
       </View>
     </Card.Content>

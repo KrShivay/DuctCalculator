@@ -13,10 +13,12 @@ import {
 import {Button, Card, IconButton, Text, TextInput} from 'react-native-paper';
 import Pinchable from 'react-native-pinchable';
 import {ClearStorage, StoreJsonData, StoreStringData} from '../../asyncStorage';
+import FormSelect from '../../components/FormComponents/FormSelect';
 import TextInputAvoidingView from '../../components/KeyBoardAvoidingView';
 import ModalView from '../../components/ModalView';
 import {BRITISH_UNITS, CAL_METHOD, SI_UNITS} from '../../data/ductCheckerData';
 import ScreenWrapper from '../../layout/ScreenWrapper';
+import {ductSizeScreenInsert} from '../../services';
 import {colorWhite, fifthColor, firstColor} from '../../styles/constants';
 import MainStyles from '../../styles/mainStyles';
 import SpaceStyles from '../../styles/spaceStyles';
@@ -29,6 +31,8 @@ import GiDuctResult from '../DuctSizer/giDuctResult';
 import {calculateCosting} from '../DuctSizer/sizerFns';
 
 const {height} = Dimensions.get('screen');
+
+const unitArr = ['SQ.M', 'SQ.FT'];
 
 export default function DuctSizes() {
   const navigation = useNavigation();
@@ -44,13 +48,15 @@ export default function DuctSizes() {
 
   const [calMethod, setCalMethod] = useState<string>('velocity');
   const [units, setUnits] = useState<string>('siUnits');
-  const [unit, setUnit] = useState<string>('');
+  const [unit, setUnit] = useState<string>('SQ.M');
 
   const [cmVisible, setCmVisible] = useState<boolean>(false);
   const [utVisible, setUtVisible] = useState<boolean>(false);
 
   const [sizerData, setSizerData] = useState<any>();
   const [checkerData, setCheckerData] = useState<any | undefined>();
+
+  const [userData, setUserData] = useState<any | undefined>();
 
   const getUnitLabel = () => {
     if (units === 'britishUnits') {
@@ -68,6 +74,7 @@ export default function DuctSizes() {
     getData('frictionRate', setFrictionRate);
     getData('ductHeight', setDuctHeight);
     getData('floorArea', setFloorArea);
+    getData('userDetails', setUserData);
   }, []);
 
   const getData = async (
@@ -95,7 +102,6 @@ export default function DuctSizes() {
       StoreStringData('calMethod', calMethod);
       StoreStringData('units', units);
       const dT = await getData('ductType', setDuctType);
-      const ut = await getData('unit', setUnit);
 
       const data = calculateChecker(
         units,
@@ -105,13 +111,41 @@ export default function DuctSizes() {
         velocity,
         ductHeight,
       );
+      console.log({
+        units,
+        calMethod,
+        airVolume,
+        frictionRate,
+        velocity,
+        ductHeight,
+        floorArea,
+        unit,
+      });
+
       if (data) {
         StoreJsonData('data', data);
       }
-      const floorData = calculateCosting(floorArea, dT, ut);
+      console.log({data});
+      const floorData = calculateCosting(floorArea, dT, unit);
       if (floorData) {
         StoreJsonData('floorData', floorData);
       }
+      console.log({floorData, inside: floorData?.giCosting?.Preinsulated});
+
+      const uData = JSON.parse(userData);
+      const payload = {
+        ...uData,
+        email: userData?.email ?? '_',
+        airVolume,
+        calMethod,
+        ductHeight,
+        frictionRate,
+        units,
+        velocity,
+        floorArea,
+        unit,
+      };
+      ductSizeScreenInsert(payload);
       setCheckerData(data);
       setSizerData(floorData);
       setVisible(true);
@@ -174,7 +208,8 @@ export default function DuctSizes() {
             <View
               style={[
                 MainStyles.flexRow,
-                SpaceStyles.p5,
+                SpaceStyles.px5,
+                SpaceStyles.py2,
                 {justifyContent: 'space-evenly'},
               ]}>
               <Button
@@ -193,7 +228,7 @@ export default function DuctSizes() {
                 Units
               </Button>
             </View>
-            <View style={[SpaceStyles.px5, SpaceStyles.py2]}>
+            <View style={[SpaceStyles.px5]}>
               <View
                 style={[MainStyles.flexRow, {justifyContent: 'space-between'}]}>
                 <Text
@@ -257,19 +292,40 @@ export default function DuctSizes() {
                   right={<TextInput.Affix text={getUnitLabel().length} />}
                 />
               </View>
-              <View style={[SpaceStyles.mx1, SpaceStyles.my1]}>
-                <TextInput
-                  keyboardType="numeric"
-                  label="Floor Area"
-                  value={floorArea}
-                  dense
-                  mode="outlined"
-                  onChangeText={val => setFloorArea(val)}
-                  right={<TextInput.Affix text={getUnitLabel().area} />}
-                />
+              <View style={{display: 'flex', flexDirection: 'row'}}>
+                <View
+                  style={[
+                    SpaceStyles.mx1,
+                    SpaceStyles.my1,
+                    MainStyles.widthTwoThird,
+                  ]}>
+                  <TextInput
+                    keyboardType="numeric"
+                    label="Floor Area"
+                    value={floorArea}
+                    dense
+                    mode="outlined"
+                    onChangeText={val => setFloorArea(val)}
+                    right={<TextInput.Affix text={unit?.toLowerCase()} />}
+                  />
+                </View>
+                <View
+                  style={[
+                    SpaceStyles.mx1,
+                    SpaceStyles.mt3,
+                    MainStyles.widthOneThird,
+                  ]}>
+                  <FormSelect
+                    data={unitArr}
+                    value={unit}
+                    onSelect={val => setUnit(val)}
+                    elementWidth="100%"
+                    defaultButtonText="Unit"
+                  />
+                </View>
               </View>
             </View>
-            <View style={[SpaceStyles.px40, SpaceStyles.py8]}>
+            <View style={[SpaceStyles.px40, SpaceStyles.py5]}>
               <Button
                 compact
                 mode="elevated"
@@ -282,7 +338,7 @@ export default function DuctSizes() {
           </View>
           {visible ? (
             <View style={SpaceStyles.p2}>
-              <Card style={SpaceStyles.py5}>
+              <Card style={SpaceStyles.py2}>
                 <Text
                   style={[TextStyles.colorDark, SpaceStyles.px5]}
                   variant="titleMedium">

@@ -7,6 +7,7 @@ import {ClearStorage, StoreStringData} from '../../asyncStorage';
 import FormSelect from '../../components/FormComponents/FormSelect';
 import TextInputAvoidingView from '../../components/KeyBoardAvoidingView';
 import ScreenWrapper from '../../layout/ScreenWrapper';
+import {ductMoreDetailsInsert} from '../../services';
 import {colorWhite, firstColor, thirdColor} from '../../styles/constants';
 import MainStyles from '../../styles/mainStyles';
 import SpaceStyles from '../../styles/spaceStyles';
@@ -38,8 +39,10 @@ export default function DuctChecker() {
   const [height2, setHeight2] = useState<string>('');
   const [width2, setWidth2] = useState<string>('');
   const [length, setLength] = useState<string>('1200');
-  const [shape, setShape] = useState<string>('Straight');
+  const [shape, setShape] = useState<string>('Streight');
   const [quantity, setQuantity] = useState<string>('1');
+
+  const [userData, setUserData] = useState<any | undefined>();
 
   useEffect(() => {
     const d = async () => {
@@ -49,7 +52,23 @@ export default function DuctChecker() {
       }
     };
     d();
+    getData('userDetails', setUserData);
   }, []);
+
+  const getData = async (
+    str: string,
+    setVal: (val: string) => void,
+  ): Promise<any> => {
+    try {
+      const value: string | null = await AsyncStorage.getItem(str);
+      if (value) {
+        setVal(JSON.parse(value));
+        return value;
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
 
   useEffect(() => {
     if (sizerData) {
@@ -79,6 +98,19 @@ export default function DuctChecker() {
         shape,
         quantity,
       );
+
+      const payload = {
+        ...userData,
+        height1,
+        height2,
+        length,
+        quantity,
+        shape,
+        width1,
+        width2,
+      };
+
+      ductMoreDetailsInsert(payload);
       setDuctData(data);
       setVisible(true);
     } else {
