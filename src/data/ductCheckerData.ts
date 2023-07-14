@@ -13,7 +13,7 @@ export const SI_UNITS = {
 
 export const BRITISH_UNITS = {
   volume: 'cfm',
-  velocity: 'm/s',
+  velocity: 'fpm',
   length: 'In',
   frictionRate: 'Pa/m',
   height: 'mm',

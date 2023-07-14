@@ -17,12 +17,12 @@ export default function ResultsChecker({
   return (
     <Card.Content>
       <Text
-        style={[TextStyles.colorMedium, SpaceStyles.py2, SpaceStyles.px1]}
+        style={[{color: '#000'}, SpaceStyles.py2, SpaceStyles.px1]}
         variant="titleSmall">
-        {calMethod === 'frictionRate' ? 'Velocity' : 'Friction Rate'}
+        Circular
       </Text>
-      {calMethod === 'frictionRate' ? (
-        <View style={MainStyles.flexRow}>
+      <View style={MainStyles.flexRow}>
+        {calMethod === 'frictionRate' ? (
           <View style={[SpaceStyles.m1, MainStyles.halfInput]}>
             <TextInput
               dense
@@ -30,28 +30,13 @@ export default function ResultsChecker({
               editable={false}
               label="Circular Duct"
               style={SpaceStyles.mrp}
-              value={checkerData?.velocityCircular?.toString()}
+              value={checkerData?.frictionCircular?.toString() || '0.00'}
               right={
-                <TextInput.Affix text={units === 'siUnits' ? 'm/s' : 'fpm'} />
+                <TextInput.Affix text={units === 'siUnits' ? 'Pa/m' : 'Pa/m'} />
               }
             />
           </View>
-          <View style={[SpaceStyles.m1, MainStyles.halfInput]}>
-            <TextInput
-              dense
-              mode="outlined"
-              editable={false}
-              label="Rectangular Duct"
-              style={SpaceStyles.mrp}
-              value={checkerData?.velocityRectangular?.toString()}
-              right={
-                <TextInput.Affix text={units === 'siUnits' ? 'm/s' : 'fpm'} />
-              }
-            />
-          </View>
-        </View>
-      ) : (
-        <View style={MainStyles.flexRow}>
+        ) : (
           <View style={[SpaceStyles.m1, MainStyles.halfInput]}>
             <TextInput
               dense
@@ -59,82 +44,63 @@ export default function ResultsChecker({
               editable={false}
               label="Circular Duct"
               style={SpaceStyles.mrp}
-              value={checkerData?.frictionCircular?.toString()}
+              value={checkerData?.velocityCircular?.toString() || '0.00'}
               right={
-                <TextInput.Affix text={units === 'siUnits' ? 'Pa/m' : 'Pa/m'} />
+                <TextInput.Affix text={units === 'siUnits' ? 'm/s' : 'fpm'} />
               }
             />
           </View>
-          <View style={[SpaceStyles.m1, MainStyles.halfInput]}>
-            <TextInput
-              dense
-              mode="outlined"
-              editable={false}
-              label="Rectangle Duct"
-              style={SpaceStyles.mrp}
-              value={checkerData?.frictionRectangular?.toString()}
-              right={
-                <TextInput.Affix text={units === 'siUnits' ? 'Pa/m' : 'Pa/m'} />
-              }
-            />
-          </View>
-        </View>
-      )}
-      {/* <View style={MainStyles.flexRow}>
+        )}
         <View style={[SpaceStyles.m1, MainStyles.halfInput]}>
           <TextInput
             editable={false}
-            label="Height"
+            dense
+            mode="outlined"
+            label="Diameter"
             style={SpaceStyles.mrp}
-            value={checkerData?.mmHeight?.toString()}
-            right={<TextInput.Affix text="mm" />}
+            value={checkerData?.ductDiamaeter?.toString()}
+            right={<TextInput.Affix text={units === 'siUnits' ? 'm' : 'In'} />}
           />
         </View>
-        <View style={[SpaceStyles.m1, MainStyles.halfInput]}>
-          <TextInput
-            editable={false}
-            label="Width"
-            style={SpaceStyles.mrp}
-            value={checkerData?.mmWidth?.toString()}
-            right={<TextInput.Affix text="mm" />}
-          />
-        </View>
-      </View> */}
-      {/* <View style={MainStyles.flexRow}>
-        <View style={[SpaceStyles.m1, MainStyles.halfInput]}>
-          <TextInput
-            editable={false}
-            label="Perimeter"
-            style={SpaceStyles.mrp}
-            value={checkerData?.perimeter?.toString()}
-            right={<TextInput.Affix text="mm" />}
-          />
-        </View>
-        <View style={[SpaceStyles.m1, MainStyles.halfInput]}>
-          <TextInput
-            editable={false}
-            label="Area"
-            style={SpaceStyles.mrp}
-            value={checkerData?.area?.toString()}
-            right={<TextInput.Affix text="sqmt" />}
-          />
-        </View>
-      </View> */}
+      </View>
+      <Text
+        style={[{color: '#000'}, SpaceStyles.py2, SpaceStyles.px1]}
+        variant="titleSmall">
+        Rectangular
+      </Text>
       <View style={MainStyles.flexRow}>
         <View style={MainStyles.halfInput}>
-          <View style={SpaceStyles.m1}>
-            <TextInput
-              editable={false}
-              dense
-              mode="outlined"
-              label="Diameter"
-              style={SpaceStyles.mrp}
-              value={checkerData?.ductDiamaeter?.toString()}
-              right={
-                <TextInput.Affix text={units === 'siUnits' ? 'm' : 'In'} />
-              }
-            />
-          </View>
+          {calMethod === 'frictionRate' ? (
+            <View style={[SpaceStyles.m1]}>
+              <TextInput
+                dense
+                mode="outlined"
+                editable={false}
+                label="Rectangle Duct"
+                style={SpaceStyles.mrp}
+                value={checkerData?.frictionRectangular?.toString() || '0.00'}
+                right={
+                  <TextInput.Affix
+                    text={units === 'siUnits' ? 'Pa/m' : 'Pa/m'}
+                  />
+                }
+              />
+            </View>
+          ) : (
+            <View style={[SpaceStyles.m1]}>
+              <TextInput
+                dense
+                mode="outlined"
+                editable={false}
+                label="Rectangular Duct"
+                style={SpaceStyles.mrp}
+                value={checkerData?.velocityRectangular?.toString() || '0.00'}
+                right={
+                  <TextInput.Affix text={units === 'siUnits' ? 'm/s' : 'fpm'} />
+                }
+              />
+            </View>
+          )}
           <View style={SpaceStyles.m1}>
             <TextInput
               dense
@@ -148,6 +114,7 @@ export default function ResultsChecker({
               }
             />
           </View>
+          {console.log('>>>>>>>>>>>>>', {mmHeight: checkerData?.mmHeight})}
           <View style={SpaceStyles.m1}>
             <TextInput
               dense
@@ -182,7 +149,10 @@ export default function ResultsChecker({
                 TextStyles.textCenter,
               ]}
               variant="titleSmall">
-              {checkerData?.mmHeight / 1000 / checkerData?.ductWidth} : 1
+              {(checkerData?.mmHeight / 1000 / checkerData?.ductWidth)?.toFixed(
+                2,
+              )}{' '}
+              : 1
             </Text>
             <Text
               style={[

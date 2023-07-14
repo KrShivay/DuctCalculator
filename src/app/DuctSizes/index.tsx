@@ -23,16 +23,16 @@ import {colorWhite, fifthColor, firstColor} from '../../styles/constants';
 import MainStyles from '../../styles/mainStyles';
 import SpaceStyles from '../../styles/spaceStyles';
 import TextStyles from '../../styles/textStyles';
-import CalculationMethod from '../components/CalculationMethods';
-import Units from '../components/Units';
 import calculateChecker from '../DuctChecker/checkerFns';
 import ResultsChecker from '../DuctChecker/result';
 import GiDuctResult from '../DuctSizer/giDuctResult';
 import {calculateCosting} from '../DuctSizer/sizerFns';
+import CalculationMethod from '../components/CalculationMethods';
+import Units from '../components/Units';
 
 const {height} = Dimensions.get('screen');
 
-const unitArr = ['SQ.M', 'SQ.FT'];
+const unitArr = ['SQ.FT', 'SQ.M'];
 
 export default function DuctSizes() {
   const navigation = useNavigation();
@@ -40,15 +40,18 @@ export default function DuctSizes() {
   const [floorArea, setFloorArea] = useState<any>();
   const [ductType, setDuctType] = useState<string>('Rectangle');
   const [visible, setVisible] = useState<boolean>(false);
+  const [floorVisible, setFloorVisible] = useState<boolean>(false);
+
   const [open, setOpen] = useState<boolean>(false);
   const [airVolume, setAirVolume] = useState<string>('');
+  //  value={(parseInt(floorArea) * 3).toString()}
   const [velocity, setVelocity] = useState<string>('');
   const [frictionRate, setFrictionRate] = useState<string>('');
   const [ductHeight, setDuctHeight] = useState<string>('');
 
   const [calMethod, setCalMethod] = useState<string>('velocity');
   const [units, setUnits] = useState<string>('siUnits');
-  const [unit, setUnit] = useState<string>('SQ.M');
+  const [unit, setUnit] = useState<string>('SQ.FT');
 
   const [cmVisible, setCmVisible] = useState<boolean>(false);
   const [utVisible, setUtVisible] = useState<boolean>(false);
@@ -166,6 +169,51 @@ export default function DuctSizes() {
     }
   };
 
+  const handleFloorArea = async () => {
+    if (floorArea) {
+      StoreStringData('floorArea', floorArea);
+      const dT = await getData('ductType', setDuctType);
+
+      const floorData = calculateCosting(floorArea, dT, unit);
+      if (floorData) {
+        StoreJsonData('floorData', floorData);
+      }
+      console.log({floorData, inside: floorData?.giCosting?.Preinsulated});
+
+      const uData = JSON.parse(userData);
+      const payload = {
+        ...uData,
+        email: userData?.email ?? '_',
+        airVolume,
+        calMethod,
+        ductHeight,
+        frictionRate,
+        units,
+        velocity,
+        floorArea,
+        unit,
+      };
+      ductSizeScreenInsert(payload);
+      // setCheckerData(data);
+      setSizerData(floorData);
+      setFloorVisible(true);
+    } else {
+      Alert.alert(
+        'Error',
+        'Please enter Floor Area',
+        [
+          {
+            text: 'Ok',
+            onPress: () => handleClear(),
+          },
+        ],
+        {
+          cancelable: false,
+        },
+      );
+    }
+  };
+
   const handleClear = () => {
     setAirVolume('');
     setFloorArea('');
@@ -175,6 +223,7 @@ export default function DuctSizes() {
     setCheckerData(undefined);
     setSizerData(undefined);
     setVisible(false);
+    setFloorVisible(false);
   };
 
   return (
@@ -243,6 +292,7 @@ export default function DuctSizes() {
                   onPress={() => setOpen(true)}
                 />
               </View>
+
               <View style={[SpaceStyles.mx1, SpaceStyles.my1]}>
                 <TextInput
                   keyboardType="numeric"
@@ -250,6 +300,7 @@ export default function DuctSizes() {
                   dense
                   mode="outlined"
                   value={airVolume}
+                  // value={(parseInt(floorArea) * 3).toString()}
                   onChangeText={val => setAirVolume(val)}
                   right={<TextInput.Affix text={getUnitLabel().volume} />}
                 />
@@ -292,38 +343,6 @@ export default function DuctSizes() {
                   right={<TextInput.Affix text={getUnitLabel().length} />}
                 />
               </View>
-              <View style={{display: 'flex', flexDirection: 'row'}}>
-                <View
-                  style={[
-                    SpaceStyles.mx1,
-                    SpaceStyles.my1,
-                    MainStyles.widthTwoThird,
-                  ]}>
-                  <TextInput
-                    keyboardType="numeric"
-                    label="Floor Area"
-                    value={floorArea}
-                    dense
-                    mode="outlined"
-                    onChangeText={val => setFloorArea(val)}
-                    right={<TextInput.Affix text={unit?.toLowerCase()} />}
-                  />
-                </View>
-                <View
-                  style={[
-                    SpaceStyles.mx1,
-                    SpaceStyles.mt3,
-                    MainStyles.widthOneThird,
-                  ]}>
-                  <FormSelect
-                    data={unitArr}
-                    value={unit}
-                    onSelect={val => setUnit(val)}
-                    elementWidth="100%"
-                    defaultButtonText="Unit"
-                  />
-                </View>
-              </View>
             </View>
             <View style={[SpaceStyles.px40, SpaceStyles.py5]}>
               <Button
@@ -332,7 +351,7 @@ export default function DuctSizes() {
                 buttonColor={firstColor}
                 textColor={colorWhite}
                 onPress={handleProceed}>
-                Calculate
+                Calculate Sizes
               </Button>
             </View>
           </View>
@@ -342,18 +361,73 @@ export default function DuctSizes() {
                 <Text
                   style={[TextStyles.colorDark, SpaceStyles.px5]}
                   variant="titleMedium">
-                  Output
+                  Output -{' '}
+                  {calMethod === 'frictionRate' ? 'Velocity' : 'Friction Rate'}
                 </Text>
                 <ResultsChecker
                   checkerData={checkerData}
                   calMethod={calMethod}
                   units={units}
                 />
-                <GiDuctResult sizerData={sizerData} />
               </Card>
             </View>
           ) : null}
           {visible ? (
+            <>
+              <View style={[SpaceStyles.mx7, {marginTop: 40}]}>
+                <View style={{display: 'flex', flexDirection: 'row'}}>
+                  <View
+                    style={[
+                      SpaceStyles.mx1,
+                      SpaceStyles.my1,
+                      MainStyles.widthTwoThird,
+                    ]}>
+                    <TextInput
+                      keyboardType="numeric"
+                      label="Floor Area"
+                      value={floorArea}
+                      dense
+                      mode="outlined"
+                      onChangeText={val => setFloorArea(val)}
+                      right={<TextInput.Affix text={unit?.toLowerCase()} />}
+                    />
+                  </View>
+                  <View
+                    style={[
+                      SpaceStyles.mx1,
+                      SpaceStyles.mt3,
+                      MainStyles.widthOneThird,
+                    ]}>
+                    <FormSelect
+                      data={unitArr}
+                      value={unit}
+                      onSelect={val => setUnit(val)}
+                      elementWidth="100%"
+                      defaultButtonText="Unit"
+                    />
+                  </View>
+                </View>
+                <View style={[SpaceStyles.px40, SpaceStyles.py5]}>
+                  <Button
+                    compact
+                    mode="elevated"
+                    buttonColor={firstColor}
+                    textColor={colorWhite}
+                    onPress={handleFloorArea}>
+                    Calculate Costing
+                  </Button>
+                </View>
+              </View>
+              {floorVisible ? (
+                <View style={SpaceStyles.p2}>
+                  <Card style={SpaceStyles.py2}>
+                    <GiDuctResult sizerData={sizerData} />
+                  </Card>
+                </View>
+              ) : null}
+            </>
+          ) : null}
+          {visible && floorVisible ? (
             <View style={[SpaceStyles.px40, SpaceStyles.py10]}>
               <Button
                 compact

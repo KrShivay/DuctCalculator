@@ -20,7 +20,7 @@ export default function calculateChecker(
     if (units === 'britishUnits') {
       aV = aV / 2118.88;
       fR = fR / 0.12;
-      dH = dH / 39.3701;
+      dH = dH;
       const data = fricationMethodCalculation(aV, fR, dH, units);
       return data;
       // txt_Width1 = parseFloat(txt_DuctWidth) * 25.4;
@@ -38,8 +38,9 @@ export default function calculateChecker(
     if (units === 'britishUnits') {
       aV = aV / 2118.88;
       vR = vR / 196.85;
-      dH = dH / 39.3701;
+      dH = dH;
       const data = velocityMethodCalculation(aV, vR, dH, units);
+      console.log('LINE 43 >>>>>', {data});
       return data;
     }
   }
@@ -90,7 +91,7 @@ export function velocityMethodCalculation(
   const AirVolume = airVol;
   const Velocity = vc;
   const DuctHeight = dctHt;
-
+  console.log({DuctHeight});
   const DuctDia = Math.pow(1.2732 * (AirVolume / Velocity), 0.5);
   const DuctWidth = AirVolume / Velocity / DuctHeight;
   const FrictionCircle =
@@ -100,7 +101,7 @@ export function velocityMethodCalculation(
   const m = (DuctHeight * DuctWidth) / (2 * (DuctHeight + DuctWidth));
 
   const FrictionRectangle = (f * 1.2 * Math.pow(Velocity, 2)) / (2 * m);
-
+  console.log({mmHeight: (DuctHeight * 1000).toFixed(2)});
   if (units === 'siUnits') {
     try {
       return {
@@ -121,8 +122,8 @@ export function velocityMethodCalculation(
         ductWidth: (DuctWidth * 39.3701).toFixed(),
         frictionCircular: (FrictionCircle * 0.12).toFixed(2),
         frictionRectangular: (FrictionRectangle * 0.12).toFixed(2),
-        mmHeight: (DuctHeight * 25.4).toFixed(2),
-        mmWidth: (DuctWidth * 39.3701 * 25.4).toFixed(2),
+        mmHeight: (DuctHeight * 1000).toFixed(2),
+        mmWidth: (DuctWidth * 39.3701 * 1000).toFixed(2),
       };
     } catch (e) {
       console.log('e', e);

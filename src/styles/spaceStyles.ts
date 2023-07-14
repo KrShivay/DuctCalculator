@@ -94,6 +94,9 @@ const SpaceStyles = StyleSheet.create({
   mx5: {
     marginHorizontal: 12.5,
   },
+  mx7: {
+    marginHorizontal: 20,
+  },
   my1: {
     marginVertical: 2.5,
   },
