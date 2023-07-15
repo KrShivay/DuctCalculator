@@ -45,9 +45,9 @@ export default function DuctSizes() {
   const [open, setOpen] = useState<boolean>(false);
   const [airVolume, setAirVolume] = useState<string>('');
   //  value={(parseInt(floorArea) * 3).toString()}
-  const [velocity, setVelocity] = useState<string>('');
-  const [frictionRate, setFrictionRate] = useState<string>('');
-  const [ductHeight, setDuctHeight] = useState<string>('');
+  const [velocity, setVelocity] = useState<string>('1');
+  const [frictionRate, setFrictionRate] = useState<string>('1');
+  const [ductHeight, setDuctHeight] = useState<string>('1');
 
   const [calMethod, setCalMethod] = useState<string>('velocity');
   const [units, setUnits] = useState<string>('siUnits');
@@ -68,6 +68,17 @@ export default function DuctSizes() {
       return SI_UNITS;
     }
   };
+
+  useEffect(() => {
+    if (calMethod) {
+      setFrictionRate('1');
+      setVelocity('1');
+      setFloorArea('1');
+      setDuctHeight('1');
+      setVisible(false);
+      setFloorVisible(false);
+    }
+  }, [calMethod]);
 
   useEffect(() => {
     getData('units', setUnits);
@@ -96,15 +107,21 @@ export default function DuctSizes() {
   };
 
   const handleProceed = async () => {
-    if (airVolume && ductHeight && (frictionRate || velocity) && floorArea) {
+    if (
+      airVolume &&
+      airVolume != 0 &&
+      ductHeight &&
+      ductHeight != 0 &&
+      ((frictionRate && frictionRate != 0) || (velocity && velocity != 0))
+    ) {
       StoreStringData('airVolume', airVolume);
       StoreStringData('velocity', velocity);
       StoreStringData('frictionRate', frictionRate);
       StoreStringData('ductHeight', ductHeight);
-      StoreStringData('floorArea', floorArea);
+      // StoreStringData('floorArea', floorArea);
       StoreStringData('calMethod', calMethod);
       StoreStringData('units', units);
-      const dT = await getData('ductType', setDuctType);
+      // const dT = await getData('ductType', setDuctType);
 
       const data = calculateChecker(
         units,
@@ -114,26 +131,14 @@ export default function DuctSizes() {
         velocity,
         ductHeight,
       );
-      console.log({
-        units,
-        calMethod,
-        airVolume,
-        frictionRate,
-        velocity,
-        ductHeight,
-        floorArea,
-        unit,
-      });
 
       if (data) {
         StoreJsonData('data', data);
       }
-      console.log({data});
-      const floorData = calculateCosting(floorArea, dT, unit);
-      if (floorData) {
-        StoreJsonData('floorData', floorData);
-      }
-      console.log({floorData, inside: floorData?.giCosting?.Preinsulated});
+      // const floorData = calculateCosting(floorArea, dT, unit);
+      // if (floorData) {
+      //   StoreJsonData('floorData', floorData);
+      // }
 
       const uData = JSON.parse(userData);
       const payload = {
@@ -150,12 +155,12 @@ export default function DuctSizes() {
       };
       ductSizeScreenInsert(payload);
       setCheckerData(data);
-      setSizerData(floorData);
+      // setSizerData(floorData);
       setVisible(true);
     } else {
       Alert.alert(
         'Error',
-        'Please enter all details',
+        'Please enter valid details',
         [
           {
             text: 'Ok',
@@ -170,7 +175,7 @@ export default function DuctSizes() {
   };
 
   const handleFloorArea = async () => {
-    if (floorArea) {
+    if (floorArea && floorArea != 0) {
       StoreStringData('floorArea', floorArea);
       const dT = await getData('ductType', setDuctType);
 
@@ -178,7 +183,6 @@ export default function DuctSizes() {
       if (floorData) {
         StoreJsonData('floorData', floorData);
       }
-      console.log({floorData, inside: floorData?.giCosting?.Preinsulated});
 
       const uData = JSON.parse(userData);
       const payload = {
@@ -225,6 +229,8 @@ export default function DuctSizes() {
     setVisible(false);
     setFloorVisible(false);
   };
+
+  console.log({sizerData, checkerData});
 
   return (
     <TextInputAvoidingView>
@@ -361,8 +367,7 @@ export default function DuctSizes() {
                 <Text
                   style={[TextStyles.colorDark, SpaceStyles.px5]}
                   variant="titleMedium">
-                  Output -{' '}
-                  {calMethod === 'frictionRate' ? 'Velocity' : 'Friction Rate'}
+                  Output - (G.I. Duct)
                 </Text>
                 <ResultsChecker
                   checkerData={checkerData}

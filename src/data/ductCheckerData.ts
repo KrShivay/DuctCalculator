@@ -20,3 +20,15 @@ export const BRITISH_UNITS = {
   area: 'sqmt',
   weigth: 'kg',
 };
+
+export function getUnitsRate(method: string, unit: string) {
+  if (method === 'velocity' && unit === 'siUnits') {
+    return 'Pa/m';
+  } else if (method === 'velocity' && unit === 'britishUnits') {
+    return 'In/100ft';
+  } else if (method === 'frictionRate' && unit === 'siUnits') {
+    return 'm/s';
+  } else if (method === 'frictionRate' && unit === 'britishUnits') {
+    return 'fpm';
+  }
+}

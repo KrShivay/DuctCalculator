@@ -1,6 +1,7 @@
 import React from 'react';
 import {View} from 'react-native';
 import {Card, Text, TextInput} from 'react-native-paper';
+import {getUnitsRate} from '../../data/ductCheckerData';
 import MainStyles from '../../styles/mainStyles';
 import SpaceStyles from '../../styles/spaceStyles';
 import TextStyles from '../../styles/textStyles';
@@ -14,6 +15,39 @@ export default function ResultsChecker({
   calMethod: string;
   units: string;
 }) {
+  const checkData = val => {
+    if (Number(val)) {
+      return val;
+    }
+    return 1;
+  };
+
+  const getHeight = val => {
+    console.log({val});
+    if (val) {
+      if (units === 'siUnits') {
+        return (val / 1000)?.toFixed(2);
+      } else {
+        return ((val * 39.3701) / 1000)?.toFixed(2);
+      }
+    } else {
+      return '1';
+    }
+  };
+
+  const getRatio = (w, h) => {
+    if (Number(w) < Number(h)) {
+      return `1: ${
+        checkData(checkerData?.ductWidth) / getHeight(checkerData?.mmHeight)
+      }`;
+    } else {
+      return `${
+        getHeight(checkerData?.mmHeight) / checkData(checkerData?.ductWidth)
+      } :1`;
+    }
+  };
+
+  console.log({checkerData: checkerData});
   return (
     <Card.Content>
       <Text
@@ -22,17 +56,22 @@ export default function ResultsChecker({
         Circular
       </Text>
       <View style={MainStyles.flexRow}>
-        {calMethod === 'frictionRate' ? (
+        {calMethod !== 'frictionRate' ? (
           <View style={[SpaceStyles.m1, MainStyles.halfInput]}>
             <TextInput
               dense
               mode="outlined"
               editable={false}
-              label="Circular Duct"
+              label={
+                calMethod === 'frictionRate' ? 'Velocity' : 'Friction Rate'
+              }
               style={SpaceStyles.mrp}
-              value={checkerData?.frictionCircular?.toString() || '0.00'}
+              value={checkerData?.frictionCircular?.toString()}
               right={
-                <TextInput.Affix text={units === 'siUnits' ? 'Pa/m' : 'Pa/m'} />
+                <TextInput.Affix
+                  textStyle={{fontSize: 10}}
+                  text={getUnitsRate(calMethod, units)}
+                />
               }
             />
           </View>
@@ -42,11 +81,16 @@ export default function ResultsChecker({
               dense
               mode="outlined"
               editable={false}
-              label="Circular Duct"
+              label={
+                calMethod === 'frictionRate' ? 'Velocity' : 'Friction Rate'
+              }
               style={SpaceStyles.mrp}
-              value={checkerData?.velocityCircular?.toString() || '0.00'}
+              value={checkerData?.velocityCircular?.toString()}
               right={
-                <TextInput.Affix text={units === 'siUnits' ? 'm/s' : 'fpm'} />
+                <TextInput.Affix
+                  textStyle={{fontSize: 10}}
+                  text={getUnitsRate(calMethod, units)}
+                />
               }
             />
           </View>
@@ -59,7 +103,12 @@ export default function ResultsChecker({
             label="Diameter"
             style={SpaceStyles.mrp}
             value={checkerData?.ductDiamaeter?.toString()}
-            right={<TextInput.Affix text={units === 'siUnits' ? 'm' : 'In'} />}
+            right={
+              <TextInput.Affix
+                textStyle={{fontSize: 10}}
+                text={units === 'siUnits' ? 'm' : 'In'}
+              />
+            }
           />
         </View>
       </View>
@@ -70,18 +119,21 @@ export default function ResultsChecker({
       </Text>
       <View style={MainStyles.flexRow}>
         <View style={MainStyles.halfInput}>
-          {calMethod === 'frictionRate' ? (
+          {calMethod !== 'frictionRate' ? (
             <View style={[SpaceStyles.m1]}>
               <TextInput
                 dense
                 mode="outlined"
                 editable={false}
-                label="Rectangle Duct"
+                label={
+                  calMethod === 'frictionRate' ? 'Velocity' : 'Friction Rate'
+                }
                 style={SpaceStyles.mrp}
-                value={checkerData?.frictionRectangular?.toString() || '0.00'}
+                value={checkerData?.frictionRectangular?.toString()}
                 right={
                   <TextInput.Affix
-                    text={units === 'siUnits' ? 'Pa/m' : 'Pa/m'}
+                    textStyle={{fontSize: 10}}
+                    text={getUnitsRate(calMethod, units)}
                   />
                 }
               />
@@ -92,11 +144,16 @@ export default function ResultsChecker({
                 dense
                 mode="outlined"
                 editable={false}
-                label="Rectangular Duct"
+                label={
+                  calMethod === 'frictionRate' ? 'Velocity' : 'Friction Rate'
+                }
                 style={SpaceStyles.mrp}
-                value={checkerData?.velocityRectangular?.toString() || '0.00'}
+                value={checkerData?.velocityRectangular?.toString()}
                 right={
-                  <TextInput.Affix text={units === 'siUnits' ? 'm/s' : 'fpm'} />
+                  <TextInput.Affix
+                    textStyle={{fontSize: 10}}
+                    text={getUnitsRate(calMethod, units)}
+                  />
                 }
               />
             </View>
@@ -110,11 +167,13 @@ export default function ResultsChecker({
               style={SpaceStyles.mrp}
               value={checkerData?.ductWidth?.toString()}
               right={
-                <TextInput.Affix text={units === 'siUnits' ? 'm' : 'In'} />
+                <TextInput.Affix
+                  textStyle={{fontSize: 10}}
+                  text={units === 'siUnits' ? 'm' : 'In'}
+                />
               }
             />
           </View>
-          {console.log('>>>>>>>>>>>>>', {mmHeight: checkerData?.mmHeight})}
           <View style={SpaceStyles.m1}>
             <TextInput
               dense
@@ -122,9 +181,12 @@ export default function ResultsChecker({
               editable={false}
               label="Duct Height"
               style={SpaceStyles.mrp}
-              value={(checkerData?.mmHeight / 1000)?.toString()}
+              value={getHeight(checkerData?.mmHeight)?.toString()}
               right={
-                <TextInput.Affix text={units === 'siUnits' ? 'm' : 'In'} />
+                <TextInput.Affix
+                  textStyle={{fontSize: 10}}
+                  text={units === 'siUnits' ? 'm' : 'In'}
+                />
               }
             />
           </View>
@@ -141,6 +203,7 @@ export default function ResultsChecker({
               variant="titleSmall">
               Duct Ratio
             </Text>
+
             <Text
               style={[
                 TextStyles.colorMedium,
@@ -149,10 +212,10 @@ export default function ResultsChecker({
                 TextStyles.textCenter,
               ]}
               variant="titleSmall">
-              {(checkerData?.mmHeight / 1000 / checkerData?.ductWidth)?.toFixed(
-                2,
-              )}{' '}
-              : 1
+              {getRatio(
+                getHeight(checkerData?.mmHeight),
+                checkData(checkerData?.ductWidth),
+              )}
             </Text>
             <Text
               style={[

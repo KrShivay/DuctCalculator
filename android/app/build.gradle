@@ -165,7 +165,6 @@ dependencies {
     implementation("com.facebook.react:react-android")
 
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
-    implementation project(':react-native-location')
     implementation("com.google.android.gms:play-services-base:16.0.1")
     implementation("com.google.android.gms:play-services-location:16.0.0")
 

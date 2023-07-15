@@ -4,6 +4,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {Alert, StyleSheet, View} from 'react-native';
+import GetLocation from 'react-native-get-location';
 import {Button, Text, TextInput} from 'react-native-paper';
 import {StoreJsonData} from '../../asyncStorage';
 import ScreenWrapper from '../../layout/ScreenWrapper';
@@ -15,31 +16,10 @@ import {loginValidation} from '../../validations/loginValidation';
 import FormError from '../FormComponents/FormError';
 import TextInputAvoidingView from '../KeyBoardAvoidingView';
 import Loader from '../Loader';
-import RNLocation from 'react-native-location';
 
 export type RootStackParamList = {
   Dashboard: {id: number} | undefined;
 };
-
-RNLocation.configure({
-  distanceFilter: 5.0,
-  desiredAccuracy: {
-    ios: 'best',
-    android: 'balancedPowerAccuracy',
-  },
-  // Android only
-  androidProvider: 'auto',
-  interval: 5000, // Milliseconds
-  fastestInterval: 10000, // Milliseconds
-  maxWaitTime: 5000, // Milliseconds
-  // iOS Only
-  activityType: 'other',
-  allowsBackgroundLocationUpdates: false,
-  headingFilter: 1, // Degrees
-  headingOrientation: 'portrait',
-  pausesLocationUpdatesAutomatically: false,
-  showsBackgroundLocationIndicator: false,
-});
 
 type LoginForm = {
   userName: string;
@@ -52,7 +32,6 @@ export default function Login() {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const [loading, setLoading] = useState(false);
-  const [permission, setPermission] = useState<boolean | undefined>();
   const [location, setLocation] = useState<any | undefined>();
 
   const {
@@ -72,7 +51,6 @@ export default function Login() {
     if (location) {
       setLoading(true);
       StoreJsonData('userDetails', data);
-      console.log(data);
       registerUser({
         ...data,
         email: data.email && data?.email !== '' ? data.email : '_',
@@ -100,32 +78,24 @@ export default function Login() {
     }
   };
 
-  const handleLocation = () => {
-    RNLocation.requestPermission({
-      ios: 'whenInUse',
-      android: {
-        detail: 'coarse',
-      },
-    }).then(granted => {
-      if (granted) {
-        setPermission(granted);
-      } else {
-        setPermission(false);
-      }
-    });
-  };
-
   useEffect(() => {
     handleLocation();
   }, []);
 
-  useEffect(() => {
-    if (permission) {
-      RNLocation.getLatestLocation({timeout: 60000}).then(latestLocation => {
-        setLocation(latestLocation);
+  const handleLocation = () => {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 60000,
+    })
+      .then(location => {
+        console.log({location});
+        setLocation(location);
+      })
+      .catch(error => {
+        const {code, message} = error;
+        console.warn(code, message);
       });
-    }
-  }, [permission]);
+  };
 
   return (
     <TextInputAvoidingView>
