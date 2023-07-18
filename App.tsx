@@ -1,5 +1,5 @@
 import {NavigationContainer} from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import * as React from 'react';
 import {LogBox} from 'react-native';
@@ -9,7 +9,9 @@ import {GetJsonData} from './src/asyncStorage';
 import Dashboard from './src/components/Dashboard';
 import LoadingScreen from './src/components/LoadingScreen';
 import Login from './src/components/Login';
-
+if (process.env.NODE_ENV !== 'development') {
+  console.log = function () {};
+}
 const theme = {
   ...DefaultTheme,
   colors: {

@@ -5,6 +5,7 @@ import {
   Alert,
   Dimensions,
   Image,
+  Keyboard,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -107,6 +108,7 @@ export default function DuctSizes() {
   };
 
   const handleProceed = async () => {
+    Keyboard.dismiss();
     if (
       airVolume &&
       airVolume != 0 &&
@@ -175,6 +177,7 @@ export default function DuctSizes() {
   };
 
   const handleFloorArea = async () => {
+    Keyboard.dismiss();
     if (floorArea && floorArea != 0) {
       StoreStringData('floorArea', floorArea);
       const dT = await getData('ductType', setDuctType);
@@ -306,8 +309,16 @@ export default function DuctSizes() {
                   dense
                   mode="outlined"
                   value={airVolume}
+                  onChangeText={val => {
+                    const re = /^[0-9.\b]+$/;
+                    if (re.test(val) || val === '') {
+                      console.log({val});
+                      setAirVolume(val);
+                    }
+                  }}
                   // value={(parseInt(floorArea) * 3).toString()}
-                  onChangeText={val => setAirVolume(val)}
+                  // onChangeText={val => setAirVolume(val)}
+
                   right={<TextInput.Affix text={getUnitLabel().volume} />}
                 />
               </View>
@@ -319,7 +330,13 @@ export default function DuctSizes() {
                     dense
                     mode="outlined"
                     value={velocity}
-                    onChangeText={val => setVelocity(val)}
+                    onChangeText={val => {
+                      const re = /^[0-9.\b]+$/;
+                      if (re.test(val) || val === '') {
+                        console.log({val});
+                        setVelocity(val);
+                      }
+                    }}
                     right={<TextInput.Affix text={getUnitLabel().velocity} />}
                   />
                 </View>
@@ -331,7 +348,13 @@ export default function DuctSizes() {
                     dense
                     mode="outlined"
                     value={frictionRate}
-                    onChangeText={val => setFrictionRate(val)}
+                    onChangeText={val => {
+                      const re = /^[0-9.\b]+$/;
+                      if (re.test(val) || val === '') {
+                        console.log({val});
+                        setFrictionRate(val);
+                      }
+                    }}
                     right={
                       <TextInput.Affix text={getUnitLabel().frictionRate} />
                     }
@@ -345,7 +368,13 @@ export default function DuctSizes() {
                   dense
                   mode="outlined"
                   value={ductHeight}
-                  onChangeText={val => setDuctHeight(val)}
+                  onChangeText={val => {
+                    const re = /^[0-9.\b]+$/;
+                    if (re.test(val) || val === '') {
+                      console.log({val});
+                      setDuctHeight(val);
+                    }
+                  }}
                   right={<TextInput.Affix text={getUnitLabel().length} />}
                 />
               </View>
@@ -393,7 +422,13 @@ export default function DuctSizes() {
                       value={floorArea}
                       dense
                       mode="outlined"
-                      onChangeText={val => setFloorArea(val)}
+                      onChangeText={val => {
+                        const re = /^[0-9.\b]+$/;
+                        if (re.test(val) || val === '') {
+                          console.log({val});
+                          setFloorArea(val);
+                        }
+                      }}
                       right={<TextInput.Affix text={unit?.toLowerCase()} />}
                     />
                   </View>
@@ -468,7 +503,11 @@ export default function DuctSizes() {
                   <Text style={styles.font24}>X</Text>
                 </TouchableOpacity>
               </View>
-              <ScrollView horizontal minimumZoomScale={1} maximumZoomScale={5}>
+              <ScrollView
+                keyboardShouldPersistTaps="handled"
+                horizontal
+                minimumZoomScale={1}
+                maximumZoomScale={5}>
                 <Pinchable>
                   <Image
                     source={require('../../assets/ductingStandards1.jpeg')}

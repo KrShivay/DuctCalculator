@@ -189,7 +189,13 @@ export default function DuctChecker() {
                   mode="outlined"
                   value={height1}
                   style={[MainStyles.halfInput, SpaceStyles.mx1]}
-                  onChangeText={val => setHeight1(val)}
+                  onChangeText={val => {
+                    const re = /^[0-9.\b]+$/;
+                    if (re.test(val) || val === '') {
+                      console.log({val});
+                      setHeight1(val);
+                    }
+                  }}
                   right={<TextInput.Affix text="mm" />}
                 />
                 <TextInput
@@ -199,7 +205,13 @@ export default function DuctChecker() {
                   mode="outlined"
                   value={height2}
                   style={[MainStyles.halfInput, SpaceStyles.mx1]}
-                  onChangeText={val => setHeight2(val)}
+                  onChangeText={val => {
+                    const re = /^[0-9.\b]+$/;
+                    if (re.test(val) || val === '') {
+                      console.log({val});
+                      setHeight2(val);
+                    }
+                  }}
                   right={<TextInput.Affix text="mm" />}
                 />
               </View>
@@ -213,7 +225,13 @@ export default function DuctChecker() {
                   mode="outlined"
                   value={width1}
                   style={[MainStyles.halfInput, SpaceStyles.mx1]}
-                  onChangeText={val => setWidth1(val)}
+                  onChangeText={val => {
+                    const re = /^[0-9.\b]+$/;
+                    if (re.test(val) || val === '') {
+                      console.log({val});
+                      setWidth1(val);
+                    }
+                  }}
                   right={<TextInput.Affix text="mm" />}
                 />
                 <TextInput
@@ -223,7 +241,13 @@ export default function DuctChecker() {
                   mode="outlined"
                   value={width2}
                   style={[MainStyles.halfInput, SpaceStyles.mx1]}
-                  onChangeText={val => setWidth2(val)}
+                  onChangeText={val => {
+                    const re = /^[0-9.\b]+$/;
+                    if (re.test(val) || val === '') {
+                      console.log({val});
+                      setWidth2(val);
+                    }
+                  }}
                   right={<TextInput.Affix text="mm" />}
                 />
               </View>
@@ -235,7 +259,13 @@ export default function DuctChecker() {
                   dense
                   mode="outlined"
                   value={length}
-                  onChangeText={val => setLength(val)}
+                  onChangeText={val => {
+                    const re = /^[0-9.\b]+$/;
+                    if (re.test(val) || val === '') {
+                      console.log({val});
+                      setLength(val);
+                    }
+                  }}
                   right={<TextInput.Affix text="mm" />}
                 />
               </View>
@@ -247,7 +277,13 @@ export default function DuctChecker() {
                   value={quantity}
                   dense
                   mode="outlined"
-                  onChangeText={val => setQuantity(val)}
+                  onChangeText={val => {
+                    const re = /^[0-9.\b]+$/;
+                    if (re.test(val) || val === '') {
+                      console.log({val});
+                      setQuantity(val);
+                    }
+                  }}
                 />
               </View>
               <View style={[SpaceStyles.mx1, SpaceStyles.my1]}>

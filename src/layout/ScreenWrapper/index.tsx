@@ -39,6 +39,7 @@ export default function ScreenWrapper({
     <>
       {withScrollView ? (
         <ScrollView
+          keyboardShouldPersistTaps="handled"
           {...rest}
           contentContainerStyle={contentContainerStyle}
           alwaysBounceVertical={false}

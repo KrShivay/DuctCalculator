@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Button, Card, Text} from 'react-native-paper';
+import {Card, Text} from 'react-native-paper';
 import {colorBlack, firstColor} from '../../styles/constants';
 import MainStyles from '../../styles/mainStyles';
 import SpaceStyles from '../../styles/spaceStyles';
@@ -37,6 +37,7 @@ const TabButton = ({sizerData}: {sizerData: any}) => {
   return (
     <ScrollView
       horizontal
+      keyboardShouldPersistTaps="handled"
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}>
       {btnArr?.map(label => (

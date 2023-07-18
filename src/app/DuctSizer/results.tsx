@@ -4,7 +4,7 @@ import {Card, Text, TextInput} from 'react-native-paper';
 import {colorBlack} from '../../styles/constants';
 import MainStyles from '../../styles/mainStyles';
 import SpaceStyles from '../../styles/spaceStyles';
-import {giData, GIDuctLabel, hvacData} from './sizerFns';
+import {GIDuctLabel, giData, hvacData} from './sizerFns';
 
 export default function ResultsSizer({
   sizerData,

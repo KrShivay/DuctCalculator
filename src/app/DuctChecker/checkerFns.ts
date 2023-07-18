@@ -3,6 +3,7 @@ import math from 'math.js';
 
 export const SolveCubic = (a, b, c, d) => {
   const NRoots = 3;
+
   const SquareRootof3 = Math.sqrt(3);
 
   const List = [
@@ -11,17 +12,30 @@ export const SolveCubic = (a, b, c, d) => {
     new Complex(-0.5, SquareRootof3 / 2.0),
   ];
 
+  console.log({SquareRootof3});
+
   const DELTA =
     18 * a * b * c * d -
     4 * b * b * b * d +
     b * b * c * c -
     4 * a * c * c * c -
     27 * a * a * d * d;
-  const DELTA0 = new Complex(b * b - 3 * a * c);
-  const DELTA1 = new Complex(2 * b * b * b - 9 * a * b * c + 27 * a * a * d);
+  const DELTA0 = b * b - 3 * a * c;
+  const DELTA1 = 2 * b * b * b - 9 * a * b * c + 27 * a * a * d;
   const DELTA2 = new Complex(-27 * a * a * DELTA);
+
+  console.log({DELTA});
+  console.log({DELTA0});
+  console.log({DELTA1});
+  console.log({DELTA2});
+
   console.log({DELTA, DELTA0, DELTA1, DELTA2});
-  const C = Complex(DELTA1 + math.pow(DELTA2, 0.5) / 2).pow(1 / 3.0);
+
+  //const C =  Complex.ZERO.pow((DELTA1 + Complex.ZERO.pow(DELTA2, 0.5)) / 2, 1 / 3.0);
+  const C = math.pow(parseFloat(DELTA1 + math.pow(DELTA2, 0.5)) / 2, 1 / 3.0);
+
+  console.log({C});
+
   const r = [];
   for (var i = 0; i < 3; i++) {
     const M = new Complex(List[i] * C);
@@ -88,40 +102,53 @@ export function fricationMethodCalculation(
   const Friction = frcRt;
   const DuctHeight = dctHt;
   const a = 0.022243 * Math.pow(Airvolume, 1.852);
-  const b = parseFloat(a / Friction);
+  const b = (a / Friction).toExponential();
   const DuctDia = Math.pow(b, 1 / 4.973);
-  const z = Math.pow(DuctDia / 1.265, 5);
+  const z = Math.pow(DuctDia / 1.265, 5).toExponential();
 
-  const c = z / Math.pow(DuctHeight, 3);
+  const c = (z / Math.pow(DuctHeight, 3)).toExponential();
 
-  const d = z / Math.pow(DuctHeight, 2);
-  console.log('<<<<<<<<<>>>>>>>>>>>', {DuctDia, a, z, c, d});
-  // const root = SolveCubic(-1, 0, c.toExponential(), d.toExponential());
-  // console.log({root});
-  // const Re = Math.abs(root[0]);
+  const d = (z / Math.pow(DuctHeight, 2)).toExponential();
+  console.log({DuctDia, a, z, c, d});
 
-  const DuctWidth = parseFloat('100')?.toString();
+  const root = SolveCubic(-1, 0, c, d);
+  console.log({root});
+  const Re = Math.abs(root[0]);
+  console.log({Re});
+
+  const DuctWidth = Re?.toString();
   console.log({DuctWidth});
 
   const VelocityCircle = Airvolume / (0.785398 * Math.pow(DuctDia, 2));
-  const VelocityRectangle = Airvolume / (DuctHeight * DuctHeight * 2);
+  const VelocityRectangle = Airvolume / (DuctHeight * DuctWidth);
   console.log('fricationMethodCalculation', {
     Airvolume,
     Friction,
     DuctHeight,
+    DuctWidth,
     VelocityCircle,
     VelocityRectangle,
   });
   if (units === 'siUnits') {
+    console.log(
+      "('<<<<<<<<<>>>>>>>>>>>' +fricationMethodCalculation",
+      'siUnits',
+    );
+
     return {
       ductDiamaeter: DuctDia.toFixed(2),
       ductWidth: (DuctHeight * 2).toFixed(2),
       velocityCircular: VelocityCircle.toFixed(2),
       velocityRectangular: VelocityRectangle.toFixed(2),
       mmHeight: (DuctHeight * 1000).toFixed(2),
-      mmWidth: DuctHeight * 2 * 1000,
+      mmWidth: Number(DuctWidth)?.toFixed(2),
     };
   } else {
+    console.log(
+      "('<<<<<<<<<>>>>>>>>>>>' +fricationMethodCalculation",
+      'siUnits else',
+    );
+
     return {
       ductDiamaeter: (DuctDia * 39.3701).toFixed(2),
       ductWidth: (DuctHeight * 2 * 39.3701).toFixed(2),
@@ -130,8 +157,8 @@ export function fricationMethodCalculation(
         (Airvolume / (DuctHeight * DuctWidth)) *
         196.85
       ).toFixed(2),
-      mmHeight: (DuctHeight * 25.4).toFixed(2),
-      mmWidth: DuctHeight * 2 * 39.3701 * 25.4,
+      mmHeight: (DuctHeight * 1000).toFixed(2),
+      mmWidth: (Number(DuctWidth) * 39.3701)?.toFixed(2),
     };
   }
 }
@@ -151,6 +178,7 @@ export function velocityMethodCalculation(
   console.log('velocityMethodCalculation', {
     AirVolume,
     Velocity,
+    DuctWidth,
     DuctHeight,
     DuctWidth,
   });
@@ -164,27 +192,34 @@ export function velocityMethodCalculation(
   const FrictionRectangle = (f * 1.2 * Math.pow(Velocity, 2)) / (2 * m);
   if (units === 'siUnits') {
     try {
+      console.log(
+        "('<<<<<<<<<>>>>>>>>>>>' +velocityMethodCalculation",
+        'siUnits',
+      );
       return {
         ductDiamaeter: DuctDia.toFixed(2),
         ductWidth: DuctWidth.toFixed(2),
         frictionCircular: FrictionCircle.toFixed(2),
         frictionRectangular: FrictionRectangle.toFixed(2),
         mmHeight: (DuctHeight * 1000).toFixed(2),
-        mmWidth: DuctWidth * 1000,
+        mmWidth: DuctWidth?.toFixed(2),
       };
     } catch (e) {
       console.log(e);
     }
   } else {
     try {
-      console.log();
+      console.log(
+        "('<<<<<<<<<>>>>>>>>>>>' +velocityMethodCalculation",
+        'siUnits else',
+      );
       return {
         ductDiamaeter: (DuctDia * 39.3701).toFixed(2),
         ductWidth: (DuctWidth * 39.3701).toFixed(2),
         frictionCircular: (FrictionCircle * 0.12).toFixed(2),
         frictionRectangular: (FrictionRectangle * 0.12).toFixed(2),
         mmHeight: (DuctHeight * 1000).toFixed(2),
-        mmWidth: DuctHeight,
+        mmWidth: (Number(DuctWidth) * 39.3701)?.toFixed(2),
       };
     } catch (e) {
       console.log('e', e);

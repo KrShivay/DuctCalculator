@@ -100,7 +100,13 @@ export default function DuctSizer() {
                 label="Floor Area"
                 value={floorArea}
                 dense
-                onChangeText={val => setFloorArea(val)}
+                onChangeText={val => {
+                  const re = /^[0-9.\b]+$/;
+                  if (re.test(val) || val === '') {
+                    console.log({val});
+                    setFloorArea(val);
+                  }
+                }}
                 right={<TextInput.Affix text={unit} />}
               />
             </View>

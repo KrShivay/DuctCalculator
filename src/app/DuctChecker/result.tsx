@@ -36,14 +36,11 @@ export default function ResultsChecker({
   };
 
   const getRatio = (w, h) => {
-    if (Number(w) < Number(h)) {
-      return `1: ${
-        checkData(checkerData?.ductWidth) / getHeight(checkerData?.mmHeight)
-      }`;
+    console.log({w, h});
+    if (Number(w) > Number(h)) {
+      return `${(w / h)?.toFixed(2)} : 1`;
     } else {
-      return `${
-        getHeight(checkerData?.mmHeight) / checkData(checkerData?.ductWidth)
-      } :1`;
+      return `1 : ${(h / w)?.toFixed(2)}`;
     }
   };
 
@@ -165,7 +162,7 @@ export default function ResultsChecker({
               editable={false}
               label="Duct Width"
               style={SpaceStyles.mrp}
-              value={checkerData?.ductWidth?.toString()}
+              value={checkerData?.mmWidth?.toString()}
               right={
                 <TextInput.Affix
                   textStyle={{fontSize: 10}}
@@ -214,7 +211,7 @@ export default function ResultsChecker({
               variant="titleSmall">
               {getRatio(
                 getHeight(checkerData?.mmHeight),
-                checkData(checkerData?.ductWidth),
+                checkData(checkerData?.mmWidth),
               )}
             </Text>
             <Text
